@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Detector</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; max-width: 450px; width: 100%; }
+        h1 { color: #2e7d32; margin-bottom: 10px; }
+        p { color: #666; margin-bottom: 30px; }
+        input[type="file"] { display: none; }
+        .upload-btn { display: inline-block; background-color: #2e7d32; color: white; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background 0.2s; margin-bottom: 20px; }
+        .upload-btn:hover { background-color: #1b5e20; }
+        .submit-btn { background-color: #333; color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; display: none; }
+        .file-name { margin-bottom: 20px; color: #2e7d32; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌿 Plant Pathology AI</h1>
+        <p>Upload a clear photo of a crop leaf to scan for active pests or diseases instantly.</p>
+        
+        <form action="{% url 'predict_disease' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="image-upload" class="upload-btn">Choose Leaf Image</label>
+            <input id="image-upload" type="file" name="image" accept="image/*" onchange="displayPreview(this)">
+            
+            <div id="file-chosen" class="file-name"></div>
+            <button type="submit" id="sub-btn" class="submit-btn">Scan Crop</button>
+        </form>
+    </div>
+
+    <script>
+        function displayPreview(input) {
+            const fileName = input.files[0].name;
+            document.getElementById('file-chosen').innerText = "Selected: " + fileName;
+            document.getElementById('sub-btn').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
