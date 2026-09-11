@@ -1,11 +1,43 @@
-venv/
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.sqlite3
-*.log
-*.pot
 *.py[cod]
-*.egg-info/
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Django
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables
 .env
+.env.*
+
+# Machine learning
+*.h5
+*.hdf5
+*.keras
+*.pkl
+*.joblib
+
+# Dataset
+data/raw/
+data/processed/
+data/test/
+PlantVillage-Dataset/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
