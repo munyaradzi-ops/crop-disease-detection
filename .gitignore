@@ -41,3 +41,7 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+# Trained machine learning models
+*.keras
+*.h5
+*.hdf5
