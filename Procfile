@@ -1,0 +1,1 @@
+web: cd webapp && gunicorn config.wsgi:application
