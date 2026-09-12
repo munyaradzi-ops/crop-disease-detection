@@ -25,12 +25,17 @@ SECRET_KEY = 'django-insecure-*etn-t3pc$&kzc)uk=6y!bzu3518o_z(gje_i2kzrob%1py7b)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+CSRF_TRUSTED_ORIGINS = [
+"https://crop-disease-detection-production-70e5.up.railway.app",
+]
+
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "192.168.60.28",
     "192.168.137.1",   
-    "*"# your local IP
+   "crop-disease-detection-production-70e5.up.railway.app",
 ]
 
 
