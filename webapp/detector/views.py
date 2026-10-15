@@ -14,6 +14,8 @@ from torchvision import transforms, models
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from .validator import verify_leaf_integrity
+
 
 
 
@@ -162,9 +164,23 @@ def api_predict_disease(request):
     fs = FileSystemStorage()
     filename = fs.save(uploaded_file.name, uploaded_file)
     file_path = fs.path(filename)
-
+        
     try:
-        img = Image.open(file_path).convert('RGB')
+        is_valid_leaf, response_msg = verify_leaf_integrity(file_path)
+            
+            if not is_valid_leaf:
+                # Clean up the non-plant image immediately from server storage
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                return Response(
+                    {"status": "error", "error": f"Validation Failed: {response_msg}"},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+
+            # 🌿 The rest of your existing PyTorch Pathology Inference code stays here...
+            img = Image.open(file_path).convert('RGB')
+            # [Keep the rest of your disease prediction blocks exactly as they are...]
+
 
         # STAGE 1: Flexible Gatekeeper Evaluation
         gatekeeper_tensor = transform_gatekeeper(img).unsqueeze(0)
