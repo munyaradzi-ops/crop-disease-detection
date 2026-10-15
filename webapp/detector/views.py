@@ -152,6 +152,10 @@ def predict_disease(request):
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
 def api_predict_disease(request):
+    """
+    Mobile API Endpoint.
+    Accepts a multi-part form field 'image'.
+    """
     if 'image' not in request.FILES:
         return Response({"status": "error", "error": "Missing 'image' field."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -164,23 +168,19 @@ def api_predict_disease(request):
     fs = FileSystemStorage()
     filename = fs.save(uploaded_file.name, uploaded_file)
     file_path = fs.path(filename)
-        
+
     try:
+        # 🛡️ STAGE 0: LEAF COMPUTER VISION INTEGRITY FILTER
         is_valid_leaf, response_msg = verify_leaf_integrity(file_path)
-            
-            if not is_valid_leaf:
-                # Clean up the non-plant image immediately from server storage
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                return Response(
-                    {"status": "error", "error": f"Validation Failed: {response_msg}"},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
-                )
+        if not is_valid_leaf:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            return Response(
+                {"status": "error", "error": f"Validation Failed: {response_msg}"},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
 
-            # 🌿 The rest of your existing PyTorch Pathology Inference code stays here...
-            img = Image.open(file_path).convert('RGB')
-            # [Keep the rest of your disease prediction blocks exactly as they are...]
-
+        img = Image.open(file_path).convert('RGB')
 
         # STAGE 1: Flexible Gatekeeper Evaluation
         gatekeeper_tensor = transform_gatekeeper(img).unsqueeze(0)
@@ -207,15 +207,13 @@ def api_predict_disease(request):
         predicted_class = CLASS_NAMES[predicted_idx.item()]
         display_name = predicted_class.replace("___", " - ").replace("_", " ")
 
-        # Match healthy classes securely or map to treatments base fallback keys
         treatment_data = DISEASE_TREATMENTS.get(predicted_class, {
-            'organic': 'Foliage appears healthy. Maintain current balanced organic companion planting schedules.',
+            'organic': 'Foliage appears healthy. Maintain current organic soil balancing layers.',
             'chemical': 'No chemical spray applications are required for this healthy crop specimen.',
-            'prevention': 'Continue standard bi-weekly crop scouting procedures across the field perimeter.'
+            'prevention': 'Continue standard bi-weekly crop scouting procedures across the field.'
         })
 
         if confidence_score >= 40.0:
-            # Structuring the nested layout keys to precisely match App.js components mapping structure!
             return Response({
                 "status": "success",
                 "diagnosis": {
